@@ -4,6 +4,7 @@ export const COLORS = {
 
   white: "#FFF",
   gray: "#74858C",
+  lightGray: "#d8dbdc",
 };
 
 export const SIZES = {

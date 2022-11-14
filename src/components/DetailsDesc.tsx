@@ -16,7 +16,7 @@ type TData = {
   data: TDataOBJ
 }
 
-const DetailsDesc = ({data}: TData) => {
+const DetailsDesc = ({ data }: TData) => {
   const [text, setText] = useState(data.description.slice(0, 100));
   const [readMore, setReadMore] = useState(false);
 

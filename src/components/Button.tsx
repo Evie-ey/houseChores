@@ -39,7 +39,7 @@ export const CircleButton = ({ imgUrl, handlePress, ...props }: TCircle) => {
 type TRec = {
   minWidth: number,
   fontSize: number,
-  handlePress?: ()=> any
+  handlePress?: () => any
 }
 
 export const RectButton = ({ minWidth, fontSize, handlePress, ...props }: TRec) => {

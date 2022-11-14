@@ -62,7 +62,7 @@ const HomeHeader = ({ onSearch }: THomeHeader) => {
 
 
 
-          <Text
+        <Text
           style={{
             fontFamily: FONTS.regular,
             fontSize: SIZES.small,
@@ -72,7 +72,7 @@ const HomeHeader = ({ onSearch }: THomeHeader) => {
           You have no unread notifications
         </Text>
       </View>
-      <Divider  style={{backgroundColor:COLORS.gray}}/>
+      <Divider style={{ backgroundColor: COLORS.gray }} />
 
       {/* <View style={{ marginTop: SIZES.font }}>
         <View

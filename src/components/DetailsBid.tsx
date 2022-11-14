@@ -16,7 +16,7 @@ type TBid = {
   bid: TBidOBJ
 }
 
-const DetailsBid = ({bid}: TBid) => {
+const DetailsBid = ({ bid }: TBid) => {
   return (
     <View
       style={{
