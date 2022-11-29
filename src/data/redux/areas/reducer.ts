@@ -4,10 +4,12 @@ import { IArea } from '../../../screens/area/types'
 
 export interface AreaState {
   data: IArea[]
+  selectedArea: any
 }
 
 const initialState: AreaState = {
-  data: []
+  data: [],
+  selectedArea: undefined
 }
 
 export const areaSlice = createSlice({
@@ -26,13 +28,14 @@ export const areaSlice = createSlice({
     addArea: (state, action) => {
       state.data.push(action.payload)
     },
-    // incrementByAmount: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload
-    // },
+    getSelected: (state, action) => {
+      console.log(action.payload, 'this is selected oin reducer')
+      state.selectedArea = action.payload
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { fetchAreaData, addArea} = areaSlice.actions
+export const { fetchAreaData, addArea, getSelected} = areaSlice.actions
 
 export default areaSlice.reducer

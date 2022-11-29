@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import AreaReducer from './redux/areas/reducer';
+import ResidentReducer from './redux/residents/reducer';
+import AssignmentReducer from './redux/assignments/reducer';
 
 export const store = configureStore({
   reducer: {
-    area: AreaReducer
+    area: AreaReducer,
+    resident: ResidentReducer,
+    assignmnent: AssignmentReducer,
   },
 })
 

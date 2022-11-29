@@ -10,17 +10,19 @@ import { db } from "../../../config";
 import { useDispatch } from "react-redux";
 import { fetchResidentsData } from "../../data/redux/residents/reducer";
 import { FlatList } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 const Residents = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation()
 
   const [residents, setResidents] = useState<any>([])
   useEffect(() => {
     const fetchResidents = async () => {
       const residentsRef = await getDocs(collection(db, 'residents'));
-
+      console.log(residentsRef.size, 'ref dco')
       const residents: any = []
       residentsRef.forEach((doc: any) => {
         const { name, email } = doc.data()

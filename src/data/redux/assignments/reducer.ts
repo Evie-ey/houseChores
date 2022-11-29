@@ -1,22 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { IArea } from '../../../screens/area/types'
+import { IArea, IAssign } from '../../../screens/area/types'
 import { IResident } from '../../../screens/residents/type'
 
 export interface ResidentState {
-  data: IResident[]
+  data: IAssign[]
 }
 
 const initialState: ResidentState = {
   data: []
 }
 
-export const residentSlice = createSlice({
-  name: 'resident',
+export const assignmentSlice = createSlice({
+  name: 'assignment',
   initialState,
   reducers: {
-    fetchResidentsData: (state, action) => {
-      console.log(action.payload, 'actions frttyuu')
+    fetchAssignmentData: (state, action) => {
+      console.log(action.payload, 'assignesssssssss in reducer')
       // Redux Toolkit allows us to write "mutating" logic in reducers. It
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
@@ -24,7 +24,7 @@ export const residentSlice = createSlice({
       state.data = action.payload
 
     },
-    addResident: (state, action) => {
+    addAssignment: (state, action) => {
       state.data.push(action.payload)
     },
     // incrementByAmount: (state, action: PayloadAction<number>) => {
@@ -34,6 +34,6 @@ export const residentSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { fetchResidentsData, addResident } = residentSlice.actions
+export const { fetchAssignmentData, addAssignment } = assignmentSlice.actions
 
-export default residentSlice.reducer
+export default assignmentSlice.reducer

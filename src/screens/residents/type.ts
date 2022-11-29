@@ -1,4 +1,5 @@
 export interface IResident {
   name: string;
-  email: string
+  email: string;
+  id: string
 }

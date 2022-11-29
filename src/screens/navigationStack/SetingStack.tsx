@@ -7,13 +7,33 @@ import Residents from "../residents/Residents";
 import { Button } from "react-native-paper";
 import NewResident from "../forms/newResident";
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import NewArea from "../forms/newArea";
 import Areas from "../area/Areas";
+import AreaDetails from "../area/AreaDetails";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../../config";
 const SettingsStack = createNativeStackNavigator();
 
 function SettingsStackScreen() {
+
+  const [addButton, setAddButton] = useState(false)
+
+  const [addAreaButton, setAddAreaButton] = useState(false)
+
+  useEffect(() => {
+    const fetchResidents = async () => {
+      const residentsRef = await getDocs(collection(db, 'residents'));
+      const areasRef = await getDocs(collection(db, 'areas'));
+      if(residentsRef.size >= 10) setAddButton(true);
+
+      if(areasRef.size >= 15) setAddAreaButton(true);
+    }
+
+    fetchResidents()
+
+  }, [])
   const navigation = useNavigation();
   return (
     <SettingsStack.Navigator screenOptions={{ headerShown: false }}>
@@ -28,7 +48,7 @@ function SettingsStackScreen() {
             headerRight: () => (
               <Button
                 onPress={() => navigation.navigate("New Resident" as never)}
-
+                disabled={addButton}
                 color="black"
               >Add</Button>
             ),
@@ -56,13 +76,30 @@ function SettingsStackScreen() {
             headerRight: () => (
               <Button
                 onPress={() => navigation.navigate("New Area" as never)}
-
+                disabled={addAreaButton}
                 color="black"
               >Add</Button>
             ),
           }}
         />
         <SettingsStack.Screen name="New Area" component={NewArea}
+          options={{
+            headerRight: () => (
+              <Button
+                onPress={() => alert('This is a button!')}
+
+                color="black"
+              >Save</Button>
+            ),
+            headerLeft: () => (
+              <MaterialCommunityIcons name="close" color={"black"} size={20}
+                onPress={() => navigation.navigate("Areas" as never)}
+              />
+
+            )
+          }}
+        />
+        <SettingsStack.Screen name="AreaDetails" component={AreaDetails}
           options={{
             headerRight: () => (
               <Button

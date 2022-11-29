@@ -10,20 +10,20 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { IArea } from "./types";
 import { IState } from "../../data/types";
-import { AreaState, fetchAreaData } from "../../data/redux/areas/reducer";
+import { AreaState, fetchAreaData, getSelected } from "../../data/redux/areas/reducer";
 import { RootState } from "../../data/store";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 const Areas = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
 
   useEffect(() => {
     const fetchAreas = async () => {
-      // const data = await getDocs(collection(db, 'areas', 'C7HdsbiFACcN1kCYrcjL'));
-      
-
+      // const data = await getDocs(collection(db, 'areas', 'C7HdsbiFACcN1kCYrcjL'));w
 
       const areasRef = await getDocs(collection(db, 'areas'));
 
@@ -43,6 +43,22 @@ const Areas = () => {
     fetchAreas()
 
   }, [])
+
+  const handleSelected = async (id: string) => {
+    console.log(id, 'id is here')
+    const docRef = doc(db, "areas", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      await dispatch(getSelected(docSnap.data()))
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+
+    navigation.navigate('AreaDetails' as never)
+  }
 
   const areas = useSelector((state: RootState) => state.area.data);
 
@@ -81,11 +97,12 @@ const Areas = () => {
       <View style={styles.menuContainer}>
         {
           areas && areas.map((res: any) => (
-            <Surface style={styles.surface} key={res.area}>
+            <Surface style={styles.surface} key={res.id}>
               <List.Item
                 title={res.area}
                 left={props => <List.Icon {...props} icon="bathtub" />}
                 right={props => <List.Icon {...props} icon="arrow-right" />}
+                onPress={()=> handleSelected(res.id)}
               />
               <Divider />
             </Surface>
