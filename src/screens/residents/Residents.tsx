@@ -4,15 +4,29 @@ import { View, Text, SafeAreaView, Image, StatusBar, StyleSheet, TextInput } fro
 import { COLORS, SIZES, assets, SHADOWS, FONTS } from "../../constants";
 // to delete
 // import { db } from '../config';
-import { collection, getDocs } from "firebase/firestore";
-import { Portal, Card, Menu, Title, Button, Surface, Divider, List, } from 'react-native-paper';
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { Portal, Card, Menu, Title, Button, Surface, Divider, List, Snackbar, } from 'react-native-paper';
 import { db } from "../../../config";
 import { useDispatch } from "react-redux";
 import { fetchResidentsData } from "../../data/redux/residents/reducer";
 import { FlatList } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 
+export const fetchResidents = async () => {
+  const residentsRef = await getDocs(collection(db, 'residents'));
 
+  const residents: any = []
+  residentsRef.forEach((doc: any) => {
+    const { name, email } = doc.data()
+    residents.push({
+      id: doc.id,
+      name,
+      email
+    })
+  })
+  return residents
+
+}
 
 const Residents = () => {
   const dispatch = useDispatch();
@@ -20,30 +34,30 @@ const Residents = () => {
 
   const [residents, setResidents] = useState<any>([])
   useEffect(() => {
-    const fetchResidents = async () => {
-      const residentsRef = await getDocs(collection(db, 'residents'));
-      console.log(residentsRef.size, 'ref dco')
-      const residents: any = []
-      residentsRef.forEach((doc: any) => {
-        const { name, email } = doc.data()
-        residents.push({
-          id: doc.id,
-          name,
-          email
-        })
-      })
-      setResidents(residents);
-      await dispatch(fetchResidentsData)
+    const getResidents = async () => {
+      const residents = await fetchResidents()
+      await dispatch(fetchResidentsData(residents))
+      setResidents(residents)
 
 
 
     }
 
-    fetchResidents()
+    getResidents()
 
   }, [])
 
-  console.log(residents, 'residents')
+  const [visible, setVisible] = React.useState(false);
+  const onDismissSnackBar = () => setVisible(false);
+
+  const handleDelete = async (data: any) => {
+    console.log(data, 'data')
+    await deleteDoc(doc(db, "residents", data.id));
+    setVisible(true)
+   await fetchResidents()
+  }
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
 
@@ -76,27 +90,40 @@ const Residents = () => {
           <FlatList
           data={residents}
           keyExtractor={item => item.email}
-          renderItem ={renderResidents}
+          renderItem ={ ({item}) =>
+            <React.Fragment>
+            <List.Item
+              title={item.name}
+              left={props => <List.Icon {...props} icon="account" />}
+              right={props => <List.Icon {...props} icon="delete"  />}
+              onPress={() => handleDelete(item)}
+
+            />
+            <Divider />
+
+          </React.Fragment>
+          }
           />
         </View>
       </Surface>
+      <Snackbar
+
+                visible={visible}
+                onDismiss={onDismissSnackBar}
+                action={{
+                  label: '',
+                  onPress: () => {
+                    // Do something
+                  },
+                  color: "green"
+                }}>
+               Succssfully deleted resident
+              </Snackbar>
 
     </SafeAreaView>
 
   );
 };
-
-const renderResidents = ({item}: any) => (
-  <React.Fragment>
-    <List.Item
-      title={item.name}
-      left={props => <List.Icon {...props} icon="account" />}
-      right={props => <List.Icon {...props} icon="arrow-right" />}
-
-    />
-    <Divider />
-  </React.Fragment>
-)
 
 
 const styles = StyleSheet.create({

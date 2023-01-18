@@ -76,7 +76,7 @@ const AreaDetails = () => {
 
   const handleSubmit = async (values: any, actions: any) => {
 
-    console.log({...values, ...formData})
+
 
     try {
       const docRef = await addDoc(collection(db, "assignment",
@@ -89,7 +89,7 @@ const AreaDetails = () => {
           const docSnap = await getDoc(docRef);
 
           if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
+
             dispatch(addAssignment(docSnap.data()))
           } else {
             // doc.data() will be undefined in this case
@@ -106,7 +106,7 @@ const AreaDetails = () => {
 
   }
 
-  console.log(residents, 'residennnnnttts')
+
 
   const selectResidents = residents && residents.map(resident => resident.name)
   return (
@@ -150,7 +150,7 @@ const AreaDetails = () => {
             <SelectDropdown
               data={residents && residents}
               onSelect={(selectedItem, index) => {
-                console.log(selectedItem.name, 'hehehe, selected')
+                
                 setFormData({...formData, ['assignedTo']: selectedItem.name})
               }}
               buttonTextAfterSelection={(selectedItem, index) => {
@@ -177,11 +177,11 @@ const AreaDetails = () => {
         startDate={range.startDate}
         endDate={range.endDate}
         onConfirm={onConfirm}
-        // validRange={{
-        //   startDate: new Date(2021, 1, 2),  // optional
-        //   endDate: new Date(), // optional
-        //   disabledDates: [new Date()] // optional
-        // }}
+        validRange={{
+          startDate: new Date(),  // optional
+          // endDate: new Date(), // optional
+          // disabledDates: [new Date()] // optional
+        }}
         // onChange={} // same props as onConfirm but triggered without confirmed by user
         // saveLabel="Save" // optional
         // saveLabelDisabled={true} // optional, default is false

@@ -13,10 +13,36 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeStackScreen from './src/screens/navigationStack/HomeStack';
 import ScheduleStackScreen from './src/screens/navigationStack/ScheduleStack';
 import SettingsStackScreen from './src/screens/navigationStack/SetingStack';
+import Login from './src/screens/Login';
+import Home from './src/screens/Home';
+import HomeNavigation from './src/screens/HomeNavigation';
 
+import {
+  en,
+  // fr,
+  // nl,
+  // de,
+  // pl,
+  // pt,
+  // ar,
+  // ko
+  // fr
+  enGB,
+  registerTranslation,
+} from 'react-native-paper-dates'
+registerTranslation('en', en)
+// registerTranslation('fr', fr)
+// registerTranslation('nl', nl)
+// registerTranslation('pl', pl)
+// registerTranslation('pt', pt)
+// registerTranslation('de', de)
+// registerTranslation('ar', ar)
+// registerTranslation('ko', ko)
+// registerTranslation('fr', fr)
+registerTranslation('en-GB', enGB)
 
-
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const theme = {
   ...DefaultTheme,
@@ -39,62 +65,20 @@ const Index = () => {
   return (
     <PaperProvider>
       <NavigationContainer theme={theme}>
-        <Tab.Navigator screenOptions={
+      <Stack.Navigator
+        initialRouteName='Login'
+        screenOptions={
           ({ route }) => ({
-            headerShown: true,
-            tabBarActiveTintColor: 'black',
-            tabBarInactiveTintColor: 'gray',
+            headerShown: false
+
+
           })
         }
-          initialRouteName='Home'
+      >
+           <Stack.Screen name="Login" component={Login} />
+           <Stack.Screen name="HomeNavigation" component={HomeNavigation} />
+       </Stack.Navigator>
 
-        >
-
-          <Tab.Screen
-            name='Home'
-            component={HomeStackScreen}
-            options={{
-              headerTitle: () => < HomeHeader onSearch={() => "hello"} />,
-              headerStyle: {
-                backgroundColor: COLORS.primary,
-                height: 200,
-              },
-              headerTitleContainerStyle: {
-                width: "100%"
-              },
-              tabBarLabel: 'Home',
-              tabBarIcon: ({ color, size }) => (
-                <MaterialCommunityIcons name="home" color={color} size={size} />
-              ),
-
-            }}
-
-          />
-          <Tab.Screen name='Schedule' component={ScheduleStackScreen}
-            options={{
-              tabBarLabel: 'Schedule',
-              tabBarIcon: ({ color, size }) => (
-                <MaterialCommunityIcons name="calendar-outline" color={color} size={size} />
-              ),
-            }}
-          />
-          <Tab.Screen name='Settings' component={SettingsStackScreen}
-            options={{
-              tabBarLabel: 'Settings',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="settings" color={color} size={size} />
-              ),
-              headerTitleAlign: "center",
-              headerStyle: {
-                backgroundColor: "transparent",
-                borderBottomColor: "none",
-                borderBottomWidth: 0,
-
-
-              },
-            }}
-          />
-        </Tab.Navigator>
       </NavigationContainer>
     </PaperProvider>
   );

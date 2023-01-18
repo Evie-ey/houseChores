@@ -3,13 +3,33 @@ import { View, Text, SafeAreaView, Image, StatusBar, StyleSheet } from "react-na
 
 import { COLORS, SIZES, assets, SHADOWS, FONTS } from "../constants";
 
-import { Portal, Card, Menu, Title, Button, Surface, Divider } from 'react-native-paper';
+import { Portal, Card, Menu, Title, Button, Surface, Divider, Snackbar } from 'react-native-paper';
 import { useNavigation } from "@react-navigation/native";
+import { auth } from "../../config";
+import { signOut } from "firebase/auth";
 
 
 
 const Settings = () => {
   const navigation = useNavigation();
+  const [open, setOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+
+
+  const signOutResident = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      setVisible(true)
+      navigation.navigate('Login' as never)
+    }).catch((error) => {
+      // An error happened.
+    });
+  }
+  const onDismiss = React.useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+  const onDismissSnackBar = () => setVisible(false);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Surface style={styles.surface}>
@@ -22,9 +42,24 @@ const Settings = () => {
           <Divider />
           <Menu.Item icon="content-copy" onPress={() => { }} title="Help & Support" disabled />
           <Divider />
-          <Menu.Item icon="logout" onPress={() => { }} title="Log out" />
+          <Menu.Item icon="logout" onPress={signOutResident} title="Log out" />
         </View>
       </Surface>
+
+      <Snackbar
+
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        action={{
+          label: '',
+          onPress: () => {
+            // Do something
+          },
+          color: "green"
+        }}>
+       Logout Successful
+      </Snackbar>
+
 
     </SafeAreaView>
 
@@ -52,3 +87,4 @@ const styles = StyleSheet.create({
 });
 
 export default Settings;
+

@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { View, Text, SafeAreaView, Image, StatusBar, StyleSheet, Keyboard, ActionSheetIOS, } from "react-native";
 
 import { COLORS, SIZES, assets, SHADOWS, FONTS } from "../../constants";
-import { addDoc, collection, doc, FieldValue, Firestore, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, FieldValue, Firestore, getDoc, setDoc } from "firebase/firestore";
 
-import { db } from '../../../config';
-import { TextInput, Card, Menu, Title, Button, Surface, Divider, List, } from 'react-native-paper';
+import { auth, db } from '../../../config';
+import { TextInput, Card, Menu, Title, Button, Surface, Divider, List, Snackbar, } from 'react-native-paper';
 import { Formik } from "formik";
 import { useDispatch } from "react-redux";
 import { addResident } from "../../data/redux/residents/reducer";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const NewResident = () => {
   // const residentsRef = firebase.firestore().collection('residents');
   const dispatch = useDispatch()
+  const [visible, setVisible] = React.useState(false);
+  const onDismissSnackBar = () => setVisible(false);
 
   const initialData = useState({
     "name": "",
@@ -25,24 +28,36 @@ const NewResident = () => {
 
     //  const timestamp = db.app.name.
 
+    // ******
+
     try {
-      const docRef = await addDoc(collection(db, "residents"), {
-        ...values
+
+      createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then( async (userCredentials) => {
+        const userId = userCredentials.user.uid
+
+        // await db.collection('cities').doc('new-city-id').set(data);
+        await setDoc(doc(db, "residents", userId), {"name": values.name, "email": values.email, "password": values.password})
+        .then(() => setVisible(true))
+
+
+        // .then((docu) => {
+        //   console.log(docu, 'hhhhhhhhhhhh')
+        //   // const docRef = doc(db, "residents", docu.id);
+        //   // const docSnap = await getDoc(docRef);
+
+        //   // if (docSnap.exists()) {
+        //   //   console.log("Document data:", docSnap.data());
+        //   //   dispatch(addResident)
+        //   // } else {
+        //   //   // doc.data() will be undefined in this case
+        //   //   console.log("No such document!");
+        //   // }
+
+        // });
+
       })
-        .then(async (docu) => {
-          // const data = await getDocs(collection(db, 'areas', docu.id));
-          const docRef = doc(db, "residents", docu.id);
-          const docSnap = await getDoc(docRef);
 
-          if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
-            dispatch(addResident)
-          } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
-          }
-
-        });
 
       actions.resetForm()
 
@@ -106,6 +121,22 @@ const NewResident = () => {
         )}
 
       </Formik>
+
+      <Snackbar
+
+                visible={visible}
+                onDismiss={onDismissSnackBar}
+                action={{
+                  label: '',
+                  onPress: () => {
+                    // Do something
+                  },
+                  color: "green"
+                }}
+                theme={{ colors: {surface: 'white', accent: 'green'},}}
+                >
+               Succssfully added resident
+              </Snackbar>
 
     </SafeAreaView>
 

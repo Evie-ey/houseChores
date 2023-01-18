@@ -4,7 +4,7 @@ import { View, Text, SafeAreaView, Image, StatusBar, StyleSheet, TextInput } fro
 import { COLORS, SIZES, assets, SHADOWS, FONTS } from "../../constants";
 
 import { Portal, Card, Menu, Title, Button, Surface, Divider, List, } from 'react-native-paper';
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../config";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -14,7 +14,23 @@ import { AreaState, fetchAreaData, getSelected } from "../../data/redux/areas/re
 import { RootState } from "../../data/store";
 import { useNavigation } from "@react-navigation/native";
 
+export async function fetchAreas() {
+  // const data = await getDocs(collection(db, 'areas', 'C7HdsbiFACcN1kCYrcjL'));w
 
+  const areasRef = await getDocs(collection(db, 'areas'));
+
+  const areas: any = []
+  areasRef.forEach((doc: any) => {
+    const { area, instructions } = doc.data()
+
+    areas.push({
+      id: doc.id,
+      area,
+      instructions
+    })
+  })
+  return areas
+}
 
 const Areas = () => {
   const dispatch = useDispatch();
@@ -22,35 +38,41 @@ const Areas = () => {
 
 
   useEffect(() => {
-    const fetchAreas = async () => {
-      // const data = await getDocs(collection(db, 'areas', 'C7HdsbiFACcN1kCYrcjL'));w
-
-      const areasRef = await getDocs(collection(db, 'areas'));
-
-      const areas: any = []
-      areasRef.forEach((doc: any) => {
-        const { area, instructions } = doc.data()
-
-        areas.push({
-          id: doc.id,
-          area,
-          instructions
-        })
-      })
+    const getAreas = async () => {
+      const areas = await fetchAreas()
       await dispatch(fetchAreaData(areas))
     }
 
-    fetchAreas()
+    getAreas()
 
   }, [])
 
   const handleSelected = async (id: string) => {
-    console.log(id, 'id is here')
+    // const newPostRef = push(postListRef);
+    const docRe = await addDoc(collection(db, "generateAssignments", "individualMaps", "b"), {
+      "Eve":[ 'Hall', 'bath', 'Kit' ]
+    })
+    .then(async (docu) => {
+
+
+      const docRef = doc(db, "generateAssignments", "individualMaps");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+
+    });
+
     const docRef = doc(db, "areas", id);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
+
       await dispatch(getSelected(docSnap.data()))
     } else {
       // doc.data() will be undefined in this case
@@ -63,7 +85,7 @@ const Areas = () => {
   const areas = useSelector((state: RootState) => state.area.data);
 
 
-  console.log(areas, 'areassss')
+
 
 
   return (
